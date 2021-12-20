@@ -2,8 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { url } from "../api";
 
-const ListMuscles = () => {
-  const [muscles, setMuscles] = useState([]);
+const ListMuscles = ({muscles, setMuscles}) => {
   const handleGetMuscles = () => {
     axios.get(`${url}/muscles`).then((data) => {
       setMuscles(data.data);

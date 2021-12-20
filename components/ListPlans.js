@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { url } from "../api";
 
-const ListPlans = ({ plans, setPlans, currentPlan, setCurrentPlan }) => {
+const ListPlans = ({ plans, setPlans }) => {
 
   const handleGetPlans = () => {
     axios
