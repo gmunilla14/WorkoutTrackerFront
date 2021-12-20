@@ -5,6 +5,9 @@ import ListWorkouts from "../components/ListWorkouts";
 import ListMuscles from "../components/ListMuscles";
 import ListPlans from "../components/ListPlans";
 import ListExercises from "../components/ListExercises";
+import AddPlan from "../components/AddPlan";
+import AddMuscle from "../components/AddMuscle";
+
 import { useState } from "react";
 export default function Home() {
   const [plans, setPlans] = useState([]);
@@ -18,6 +21,7 @@ export default function Home() {
     <div className={styles.container}>
       AAAAA
       <ListWorkouts />
+      <AddMuscle />
       <ListMuscles />
       <ListPlans
         plans={plans}
@@ -25,6 +29,7 @@ export default function Home() {
         currentPlan={currentPlan}
         setCurrentPlan={setCurrentPlan}
       />
+      <AddPlan currentPlan={currentPlan} setCurrentPlan={setCurrentPlan} />
       <ListExercises />
     </div>
   );
