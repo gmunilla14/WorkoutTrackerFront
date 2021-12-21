@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { url } from "../api";
 
-const AddPlan = ({ currentPlan, setCurrentPlan }) => {
+const AddPlan = ({ currentPlan, setCurrentPlan, exercises }) => {
   const [set, setSet] = useState({});
 
   const onNameChange = (e) => {
@@ -42,7 +42,6 @@ const AddPlan = ({ currentPlan, setCurrentPlan }) => {
   };
 
   const onSetAdd = () => {
-
     let newSets = currentPlan.sets;
     console.log("newSets");
     console.log(newSets);
@@ -56,6 +55,7 @@ const AddPlan = ({ currentPlan, setCurrentPlan }) => {
       .post(`${url}/plans`, currentPlan)
       .then(() => {
         handleGetPlans();
+        setCurrentPlan({});
       })
       .catch((error) => {
         console.log(error.response);
@@ -98,17 +98,32 @@ const AddPlan = ({ currentPlan, setCurrentPlan }) => {
                   id="plannedWeight"
                   onChange={onWeightChange}
                   placeholder="Set Planned Weight (lb)"
-                ></input>
+                ></input>{" "}
+                <br />
                 <input
                   id="plannedReps"
                   onChange={onRepChange}
                   placeholder="Set Planned Reps"
-                ></input>
-                <input
-                  id="plannedExercise"
-                  onChange={onExerciseChange}
-                  placeholder="Set Exercise"
-                ></input>
+                ></input>{" "}
+                <br />
+                <fieldset>
+                  {exercises &&
+                    exercises.map((exercise) => {
+                      return (
+                        <>
+                          <input
+                            type="radio"
+                            value={exercise._id}
+                            id={exercise._id}
+                            onChange={onExerciseChange}
+                            name="exerciseRadio"
+                          ></input>
+                          <label for={exercise._id}>{exercise.name}</label>
+                          <br />
+                        </>
+                      );
+                    })}
+                </fieldset>
               </>
             ) : (
               <>

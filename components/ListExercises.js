@@ -2,8 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { url } from "../api";
 
-const ListExercises = () => {
-  const [exercises, setExercises] = useState([]);
+const ListExercises = ({exercises, setExercises}) => {
   const handleGetExercises = () => {
     axios
       .get(`${url}/exercises`)
