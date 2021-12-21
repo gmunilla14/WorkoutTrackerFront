@@ -1,4 +1,8 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
+import ListWorkouts from "./ListWorkouts";
+import PlanSet from "./PlanSet";
+import { url } from "../api";
 
 const CreateWorkout = ({ plans }) => {
   const [startTime, setStartTime] = useState(0);
@@ -6,51 +10,100 @@ const CreateWorkout = ({ plans }) => {
   const [startBound, setStartBound] = useState(0);
   const [duration, setDuration] = useState(0);
   const [clockRunning, setClockRunning] = useState(false);
-  const [workout, setWorkout] = useState({});
+  const [workout, setWorkout] = useState({
+    planID: "",
+    startTime: "",
+    sets: [],
+  });
   const [chosenPlan, setChosenPlan] = useState("");
   const [planObj, setPlanObj] = useState({
     name: "",
     creatorID: "",
     sets: [],
   });
+  const [maxSections, setMaxSections] = useState(0);
+  const [currentSection, setCurrentSection] = useState(0);
 
   const onStartButton = () => {
     setClockRunning(true);
-    const now = new Date();
-
-    setStartTime(now.getTime());
-    setStartBound(now.getTime());
-    console.log(workout);
   };
+
+  useEffect(() => {
+    if (clockRunning) {
+      const now = new Date();
+
+      setStartTime(now.getTime());
+      setStartBound(now.getTime());
+      setWorkout({ ...workout, planID: chosenPlan, startTime: now.getTime() });
+      console.log("Workout");
+      console.log(workout);
+      console.log("Plan Obj");
+      console.log(planObj);
+    }
+  }, [clockRunning]);
 
   const onIntervalButton = () => {
     const now = new Date();
-    const interval = {
-      startTime: startBound,
-      endTime: now.getTime(),
-      duration: now - startBound,
-    };
+
+    let currentSets = workout.sets;
+    console.log("Current Sets");
+    console.log(currentSets);
+    if (planObj.sets[currentSection].type === "exercise") {
+      currentSets[currentSection] = {
+        type: planObj.sets[currentSection].type,
+        startTime: startBound,
+        endTime: now.getTime(),
+        exerciseID: planObj.sets[currentSection].exerciseID,
+        weight: planObj.sets[currentSection].plannedWeight,
+        reps: planObj.sets[currentSection].plannedReps,
+      };
+    } else if (planObj.sets[currentSection].type === "rest") {
+      currentSets[currentSection] = {
+        type: planObj.sets[currentSection].type,
+        startTime: startBound,
+        endTime: now.getTime(),
+      };
+    } else {
+      console.log(`At current section ${currentSection} there is a problem`);
+    }
 
     setStartBound(now.getTime());
-    let oldIntervals = intervals;
-    oldIntervals.push(interval);
-    setIntervals(oldIntervals);
-    console.log(intervals);
+
+    setCurrentSection(currentSection + 1);
   };
 
   const onStopButton = () => {
     const now = new Date();
     setClockRunning(false);
+    let currentSets = workout.sets;
 
-    const interval = {
-      startTime: startBound,
-      endTime: now.getTime(),
-      duration: now - startBound,
-    };
+    if (planObj.sets[currentSection].type === "exercise") {
+      currentSets[currentSection] = {
+        type: planObj.sets[currentSection].type,
+        startTime: startBound,
+        endTime: now.getTime(),
+        exerciseID: planObj.sets[currentSection].exerciseID,
+        weight: planObj.sets[currentSection].plannedWeight,
+        reps: planObj.sets[currentSection].plannedReps,
+      };
+    } else if (planObj.sets[currentSection].type === "rest") {
+      currentSets[currentSection] = {
+        type: planObj.sets[currentSection].type,
+        startTime: startBound,
+        endTime: now.getTime(),
+      };
+    } else {
+      console.log(`At current section ${currentSection} there is a problem`);
+    }
 
-    let oldIntervals = intervals;
-    oldIntervals.push(interval);
-    setIntervals(oldIntervals);
+    setWorkout({ ...workout, endTime: now.getTime() });
+
+
+    axios.post(`${url}/workouts`, workout).then(() => {
+        console.log('Success??')
+    }).catch((error) => {
+        console.log(error.response)
+    })
   };
 
   useEffect(() => {
@@ -76,18 +129,22 @@ const CreateWorkout = ({ plans }) => {
       })[0];
 
       setPlanObj(newPlanObj);
+      setMaxSections(newPlanObj.sets.length);
     }
   }, [chosenPlan]);
 
   return (
     <div>
-      Create Workout
+      Create Workout \{" "}
       {!clockRunning ? (
         <button onClick={onStartButton}>Start</button>
       ) : (
         <>
-          <button onClick={onIntervalButton}>Interval</button>
-          <button onClick={onStopButton}>Stop</button>
+          {currentSection < (maxSections - 1) ? (
+            <button onClick={onIntervalButton}>Interval</button>
+          ) : (
+            <button onClick={onStopButton}>Stop</button>
+          )}
         </>
       )}
       <div id="time">{duration}</div>
@@ -117,9 +174,13 @@ const CreateWorkout = ({ plans }) => {
           </fieldset>
         </form>
       </div>
-      <>{!(chosenPlan === "") && planObj.sets.map((set) => {
-          return <div>{set.type}</div>
-      })}</>
+      <>
+        {!(chosenPlan === "") &&
+          planObj.sets.map((set) => {
+            return <PlanSet set={set} />;
+          })}
+        <div>{planObj.sets.length}</div>
+      </>
     </div>
   );
 };
