@@ -47,7 +47,7 @@ export default function Home() {
       ------------------------------
       <br />
       <br />
-      <CreateWorkout />
+      <CreateWorkout plans={plans}/>
     </div>
   );
 }

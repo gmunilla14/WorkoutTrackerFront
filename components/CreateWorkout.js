@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 
-const CreateWorkout = () => {
+const CreateWorkout = ({ plans }) => {
   const [startTime, setStartTime] = useState(0);
   const [intervals, setIntervals] = useState([]);
   const [startBound, setStartBound] = useState(0);
   const [duration, setDuration] = useState(0);
   const [clockRunning, setClockRunning] = useState(false);
+  const [workout, setWorkout] = useState({});
+  const [chosenPlan, setChosenPlan] = useState("");
+  const [planObj, setPlanObj] = useState({
+    name: "",
+    creatorID: "",
+    sets: [],
+  });
 
   const onStartButton = () => {
     setClockRunning(true);
@@ -13,6 +20,7 @@ const CreateWorkout = () => {
 
     setStartTime(now.getTime());
     setStartBound(now.getTime());
+    console.log(workout);
   };
 
   const onIntervalButton = () => {
@@ -57,6 +65,20 @@ const CreateWorkout = () => {
     return () => clearInterval(interval);
   });
 
+  const onPlanChange = (e) => {
+    setChosenPlan(e.target.value);
+  };
+
+  useEffect(() => {
+    if (!(chosenPlan === "")) {
+      const newPlanObj = plans.filter((plan) => {
+        return plan._id === chosenPlan;
+      })[0];
+
+      setPlanObj(newPlanObj);
+    }
+  }, [chosenPlan]);
+
   return (
     <div>
       Create Workout
@@ -75,6 +97,29 @@ const CreateWorkout = () => {
           return <div>{JSON.stringify(interval)} </div>;
         })}
       {intervals.length > 0 && <div>Intervals</div>}
+      <div>
+        <form>
+          <fieldset onChange={onPlanChange}>
+            {plans &&
+              plans.map((plan) => {
+                return (
+                  <>
+                    <input
+                      type="radio"
+                      name="planChoice"
+                      value={plan._id}
+                      id={plan._id}
+                    ></input>
+                    <label for={plan._id}>{plan.name}</label>
+                  </>
+                );
+              })}
+          </fieldset>
+        </form>
+      </div>
+      <>{!(chosenPlan === "") && planObj.sets.map((set) => {
+          return <div>{set.type}</div>
+      })}</>
     </div>
   );
 };
