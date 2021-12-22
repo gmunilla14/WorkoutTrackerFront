@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { url } from "../api";
+import Set from "../components/Set";
 
 export const getServerSideProps = async (context) => {
   const exerciseRes = await fetch(`${url}/exercises`);
@@ -156,7 +157,7 @@ const AddPlan = ({ exercises }) => {
       </div>
       <div>{JSON.stringify(currentPlan)}</div>
       {currentPlan.sets && currentPlan.sets.map((set) => {
-        return <div>{set.type}</div>
+        return <Set set={set} exercises={exercises}/>
       })}
     </div>
   );

@@ -1,0 +1,22 @@
+.type {
+    text-transform: capitalize
+}
+
+.exerciseSet {
+    background: orange;
+    border-width: 5px;
+    border-color: black;
+    border-style: solid;
+}
+
+.restSet {
+    background: lime;
+    border-width: 5px;
+    border-color: black;
+    border-style: solid;
+}
+
+.dataHolder {
+    display: flex;
+    justify-content: space-around;
+}
