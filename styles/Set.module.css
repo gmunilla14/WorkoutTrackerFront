@@ -1,22 +1,50 @@
+.holder {
+    width: 50%
+}
+
 .type {
-    text-transform: capitalize
+  text-transform: capitalize;
 }
 
 .exerciseSet {
-    background: orange;
-    border-width: 5px;
-    border-color: black;
-    border-style: solid;
+  background: orange;
+  border-width: 5px;
+  border-color: black;
+  border-style: solid;
+}
+
+.selectedExerciseSet {
+  background: orange;
+  border-width: 5px;
+  border-color: red;
+  border-style: solid;
 }
 
 .restSet {
-    background: lime;
-    border-width: 5px;
-    border-color: black;
-    border-style: solid;
+  background: lime;
+  border-width: 5px;
+  border-color: black;
+  border-style: solid;
+}
+
+.selectedRestSet {
+  background: lime;
+  border-width: 5px;
+  border-color: red;
+  border-style: solid;
 }
 
 .dataHolder {
-    display: flex;
-    justify-content: space-around;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.infoHolder {
+  border-width: 2px;
+  border-color: black;
+  border-style: solid;
+  padding: 5px;
+  background: white
 }

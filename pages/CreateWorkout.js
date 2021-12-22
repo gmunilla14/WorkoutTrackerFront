@@ -1,8 +1,20 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import ListWorkouts from "./ListWorkouts";
-import PlanSet from "./PlanSet";
+import ListWorkouts from "../components/ListWorkouts";
+import Set from "../components/Set";
 import { url } from "../api";
+
+export const getServerSideProps = async (context) => {
+  const planRes = await fetch(`${url}/plans`);
+  const plans = await planRes.json();
+
+  const exerciseRes = await fetch(`${url}/exercises`);
+  const exercises = await exerciseRes.json();
+
+  return {
+    props: { plans, exercises },
+  };
+};
 
 const CreateWorkout = ({ plans, exercises }) => {
   const [startBound, setStartBound] = useState(0);
@@ -21,6 +33,9 @@ const CreateWorkout = ({ plans, exercises }) => {
   });
   const [maxSections, setMaxSections] = useState(0);
   const [currentSection, setCurrentSection] = useState(0);
+  const [milliseconds, setMilliseconds] = useState("000");
+  const [seconds, setSeconds] = useState("00");
+  const [minutes, setMinutes] = useState("00");
 
   const onStartButton = () => {
     setClockRunning(true);
@@ -95,12 +110,14 @@ const CreateWorkout = ({ plans, exercises }) => {
 
     setWorkout({ ...workout, endTime: now.getTime() });
 
-
-    axios.post(`${url}/workouts`, workout).then(() => {
-        console.log('Success??')
-    }).catch((error) => {
-        console.log(error.response)
-    })
+    axios
+      .post(`${url}/workouts`, workout)
+      .then(() => {
+        console.log("Success??");
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
   };
 
   useEffect(() => {
@@ -108,13 +125,20 @@ const CreateWorkout = ({ plans, exercises }) => {
       const interval = setInterval(() => {
         const now = new Date();
         setDuration(now - startBound);
+        const time = now - startBound;
+        const mins = Math.floor(time / 60000)
+          .toString()
+          .padStart(2, "0");
+        const secs = (Math.floor(time / 1000) % 60).toString().padStart(2, "0");
+        const ms = (time % 1000).toString().padStart(3, "0");
+        setMilliseconds(ms);
+        setSeconds(secs);
+        setMinutes(mins);
       }, 1);
 
-
-    //Clear interval when component unmounts
-    return () => clearInterval(interval);
+      //Clear interval when component unmounts
+      return () => clearInterval(interval);
     }
-
   });
 
   const onPlanChange = (e) => {
@@ -134,12 +158,12 @@ const CreateWorkout = ({ plans, exercises }) => {
 
   return (
     <div>
-      Create Workout \{" "}
+      Create Workout{" "}
       {!clockRunning ? (
         <button onClick={onStartButton}>Start</button>
       ) : (
         <>
-          {currentSection < (maxSections - 1) ? (
+          {currentSection < maxSections - 1 ? (
             <button onClick={onIntervalButton}>Interval</button>
           ) : (
             <button onClick={onStopButton}>Stop</button>
@@ -147,8 +171,10 @@ const CreateWorkout = ({ plans, exercises }) => {
         </>
       )}
       <div id="time">{duration}</div>
+      <div>
+        {minutes}:{seconds}.{milliseconds}
+      </div>
       <div>Start Bound: {startBound}</div>
-
       <div>
         <form>
           <fieldset onChange={onPlanChange}>
@@ -172,7 +198,11 @@ const CreateWorkout = ({ plans, exercises }) => {
       <>
         {!(chosenPlan === "") &&
           planObj.sets.map((set) => {
-            return <PlanSet set={set} />;
+            if (planObj.sets[currentSection]._id === set._id) {
+              return <Set set={set} exercises={exercises} selected={true} />;
+            } else {
+              return <Set set={set} exercises={exercises} selected={false} />;
+            }
           })}
         <div>{planObj.sets.length}</div>
       </>
