@@ -4,9 +4,7 @@ import ListWorkouts from "./ListWorkouts";
 import PlanSet from "./PlanSet";
 import { url } from "../api";
 
-const CreateWorkout = ({ plans }) => {
-  const [startTime, setStartTime] = useState(0);
-  const [intervals, setIntervals] = useState([]);
+const CreateWorkout = ({ plans, exercises }) => {
   const [startBound, setStartBound] = useState(0);
   const [duration, setDuration] = useState(0);
   const [clockRunning, setClockRunning] = useState(false);
@@ -32,7 +30,6 @@ const CreateWorkout = ({ plans }) => {
     if (clockRunning) {
       const now = new Date();
 
-      setStartTime(now.getTime());
       setStartBound(now.getTime());
       setWorkout({ ...workout, planID: chosenPlan, startTime: now.getTime() });
       console.log("Workout");
@@ -112,10 +109,12 @@ const CreateWorkout = ({ plans }) => {
         const now = new Date();
         setDuration(now - startBound);
       }, 1);
-    }
+
 
     //Clear interval when component unmounts
     return () => clearInterval(interval);
+    }
+
   });
 
   const onPlanChange = (e) => {
@@ -149,11 +148,7 @@ const CreateWorkout = ({ plans }) => {
       )}
       <div id="time">{duration}</div>
       <div>Start Bound: {startBound}</div>
-      {intervals &&
-        intervals.map((interval) => {
-          return <div>{JSON.stringify(interval)} </div>;
-        })}
-      {intervals.length > 0 && <div>Intervals</div>}
+
       <div>
         <form>
           <fieldset onChange={onPlanChange}>

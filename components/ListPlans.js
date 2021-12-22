@@ -16,9 +16,6 @@ const ListPlans = ({ plans, setPlans }) => {
         console.log(error.response);
       });
   };
-
-
-
   return (
     <div>
       <button onClick={handleGetPlans}>Get Plans</button>

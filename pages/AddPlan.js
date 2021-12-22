@@ -2,8 +2,23 @@ import axios from "axios";
 import { useState } from "react";
 import { url } from "../api";
 
-const AddPlan = ({ currentPlan, setCurrentPlan, exercises }) => {
+export const getServerSideProps = async (context) => {
+  const exerciseRes = await fetch(`${url}/exercises`);
+  const exercises = await exerciseRes.json();
+
+  return {
+    props: {exercises}
+  }
+}
+
+
+const AddPlan = ({ exercises }) => {
   const [set, setSet] = useState({});
+  const [currentPlan, setCurrentPlan] = useState({
+    name: '',
+    creatorID: '',
+    sets: []
+  })
 
   const onNameChange = (e) => {
     setCurrentPlan({ ...currentPlan, name: e.target.value });
@@ -140,6 +155,9 @@ const AddPlan = ({ currentPlan, setCurrentPlan, exercises }) => {
         </div>
       </div>
       <div>{JSON.stringify(currentPlan)}</div>
+      {currentPlan.sets && currentPlan.sets.map((set) => {
+        return <div>{set.type}</div>
+      })}
     </div>
   );
 };
