@@ -8,7 +8,6 @@ import ListExercises from "../components/ListExercises";
 import AddPlan from "./AddPlan";
 import AddMuscle from "../components/AddMuscle";
 import AddExercise from "../components/AddExercise";
-import CreateWorkout from "../components/CreateWorkout";
 
 import { useState } from "react";
 export default function Home() {
@@ -26,21 +25,14 @@ export default function Home() {
       <ListMuscles muscles={muscles} setMuscles={setMuscles} />
       <h1>Plans</h1>
       <AddPlan
-        currentPlan={currentPlan}
-        setCurrentPlan={setCurrentPlan}
+
         exercises={exercises}
       />
       <ListPlans plans={plans} setPlans={setPlans} />
       <h1>Exercises</h1>
       <AddExercise muscles={muscles} />
       <ListExercises exercises={exercises} setExercises={setExercises} />
-      <br />
-      <br />
-      <br />
-      ------------------------------
-      <br />
-      <br />
-      <CreateWorkout plans={plans} exercises={exercises} />
+
     </div>
   );
 }
