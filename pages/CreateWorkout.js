@@ -99,6 +99,9 @@ const CreateWorkout = ({ plans, exercises }) => {
         setCurrentSection={setCurrentSection}
         exercises={exercises}
       />
+
+      <div>{JSON.stringify(planObj)}</div>
+      <div></div>
     </div>
   );
 };
